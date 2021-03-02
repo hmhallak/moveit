@@ -31,14 +31,22 @@ interface ChallengesProviderProps {
 
 export const ChallengesContext = createContext({} as ChallengesContextData);
 
-export function ChallengesProvider({ children, ...rest }: ChallengesProviderProps) {
+export function ChallengesProvider({
+  children,
+  ...rest
+}: ChallengesProviderProps) {
   const [level, setLevel] = useState(rest.level ?? 1);
-  const [currentExperience, setCurrentExperience] = useState(rest.currentExperience ?? 0);
-  const [challengesCompleted, setChallengesCompleted] = useState(rest.challengesCompleted ?? 0);
+  const [currentExperience, setCurrentExperience] = useState(
+    rest.currentExperience ?? 0,
+  );
+  const [challengesCompleted, setChallengesCompleted] = useState(
+    rest.challengesCompleted ?? 0,
+  );
 
   const [activeChallenge, setActiveChallenge] = useState(null);
   const [isLevelUpModalOpen, setIsLevelModalOpen] = useState(false);
 
+  // eslint-disable-next-line no-restricted-properties
   const experienceToNextLevel = Math.pow((level + 1) * 4, 2);
 
   useEffect(() => {
@@ -46,7 +54,7 @@ export function ChallengesProvider({ children, ...rest }: ChallengesProviderProp
   }, []);
 
   function levelUp() {
-    setLevel(level+1);
+    setLevel(level + 1);
     setIsLevelModalOpen(true);
   }
 
@@ -63,8 +71,9 @@ export function ChallengesProvider({ children, ...rest }: ChallengesProviderProp
     new Audio('/notification.mp3').play();
 
     if (Notification.permission === 'granted') {
+      // eslint-disable-next-line no-new
       new Notification('Novo desafio 🎉', {
-        body: `Valendo ${challenge.amount}xp`
+        body: `Valendo ${challenge.amount}xp`,
       });
     }
   }
@@ -81,7 +90,7 @@ export function ChallengesProvider({ children, ...rest }: ChallengesProviderProp
     let finalExperience = currentExperience + amount;
 
     if (finalExperience >= experienceToNextLevel) {
-      finalExperience = finalExperience - experienceToNextLevel;
+      finalExperience -= experienceToNextLevel;
       levelUp();
     }
 
@@ -97,10 +106,10 @@ export function ChallengesProvider({ children, ...rest }: ChallengesProviderProp
   }, [level, currentExperience, challengesCompleted]);
 
   return (
-    <ChallengesContext.Provider 
-      value={{ 
-        level, 
-        currentExperience, 
+    <ChallengesContext.Provider
+      value={{
+        level,
+        currentExperience,
         challengesCompleted,
         experienceToNextLevel,
         levelUp,
@@ -109,7 +118,8 @@ export function ChallengesProvider({ children, ...rest }: ChallengesProviderProp
         resetChallenge,
         completeChallenge,
         closeLevelUpModal,
-      }}>
+      }}
+    >
       {children}
       {isLevelUpModalOpen && <LevelUpModal />}
     </ChallengesContext.Provider>
